@@ -2,63 +2,33 @@ import random
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.table import Table
 import ui
 import functions
 import spawn
 import classes
+from universe import world
 
 console = Console()
-
-
-class Room:
-    def __init__(self, name, description, image_desc):
-        self.name = name
-        self.description = description
-        self.image_desc = image_desc
-        self.exits = {}      # {'north': 'Room_ID'}
-        self.encounter_rate = 0.2  # 20% chance of battle
-
-    def add_exit(self, direction, room_key):
-        self.exits[direction] = room_key
-
-
-world = {
-    'start': Room(
-        "Castle Gates",
-        "You stand before the looming Castle Riccar. The wind howls.",
-        "[ VISUAL: A massive iron gate stands shut. "
-        "To the side, a dead tree. ]"
-    ),
-    'forest': Room(
-        "Dark Forest",
-        "The trees are thick here. Light barely penetrates.",
-        "[ VISUAL: Twisted roots cover the path. "
-        "A glowing moth flutters nearby. ]"
-    ),
-    'hallway': Room(
-        "Grand Hallway",
-        "The interior of the castle is cold and dusty.",
-        "[ VISUAL: A long red carpet. "
-        "A cracked painting hangs on the wall. ]"
-    )
-}
-
-# Link the rooms (Simple Navigation)
-world['start'].add_exit('north', 'forest')
-world['forest'].add_exit('south', 'start')
-world['forest'].add_exit('enter', 'hallway')
-world['hallway'].add_exit('exit', 'forest')
 
 
 def render_screen(hero, room):
     """Displays the Room Visuals and Hero Status"""
     console.clear()
 
-    # Top Panel: Room View
-    view_content = (f"[bold yellow]{room.name}[/bold yellow]\n\n"
+    grid = Table.grid(padding=2)
+    grid.add_column()             # Column 1: Text
+    grid.add_column(style="cyan")  # Column 2: Art
+
+    text_content = (f"[bold yellow]{room.name}[/bold yellow]\n\n"
                     f"{room.image_desc}\n\n"
                     f"[italic]{room.description}[/italic]")
-    console.print(Panel(view_content, title="Current Location", style="cyan"))
+
+    # Add both to the grid side-by-side
+    grid.add_row(text_content, room.art)
+
+    # Print the Panel containing the Grid instead of just text
+    console.print(Panel(grid, title="Current Location", style="cyan"))
 
     # Bottom Panel: Hero Status
     current_hp = hero.sStats['Health']
@@ -85,6 +55,11 @@ def trigger_random_encounter(player):
 # MAIN GAME LOOP
 def main():
     # Setup Hero
+    # Create a hero instance
+    # Profession (proff) - Warrior/Ranger/Rogue
+    # Change to Rhyoo - Rock, Peige - Paper, Scher - Scissors LATER
+    # Primary Stats (pstats) Order - Vitality, Dexterity, Intelligence
+    # Affinity implimentation for "choices" later - red/gray/green
     player = classes.Hero(
         name="Geezam",
         proff="Ranger",
@@ -125,7 +100,7 @@ def main():
 
         # 3. Get Input
         console.print("[bold]Commands:[/bold] [N]orth, [S]outh, [E]ast, [W]est"
-                      ", [Enter], [I]nventory, [P]rofile, [Q]uit")
+                      ", [I]nventory, [P]rofile, [Q]uit")
         action = Prompt.ask("What do you do?").lower().strip()
 
         if action == "":
@@ -143,8 +118,8 @@ def main():
             direction = 'east'
         elif action in ['w', 'west']:
             direction = 'west'
-        elif action in ['enter']:
-            direction = 'enter'
+        # elif action in ['enter']:
+        #  direction = 'enter'
         elif action in ['exit']:
             direction = 'exit'
 

@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-import classes
 
 console = Console(width=40)
 
@@ -22,7 +21,7 @@ def print_panel(content: Text, title: str, color: str = "green"):
     )
 
 
-def show_hero_profile(hero: classes.Hero):
+def show_hero_profile(hero):
     """
     Gathers hero-specific data and passes it to print_panel.
     """
@@ -52,7 +51,7 @@ def show_hero_profile(hero: classes.Hero):
     print_panel(profile_text, title, color="green")
 
 
-def show_enemy_stats(enemy: classes.Enemy):
+def show_enemy_stats(enemy):
     """
     Gathers enemy-specific data and passes it to print_panel.
     """
@@ -82,7 +81,7 @@ def show_enemy_stats(enemy: classes.Enemy):
     print_panel(stats_text, title, color="red")
 
 
-def show_item_stats(item: classes.Item):
+def show_item_stats(item):
     """
     Gathers item-specific data and passes it to print_panel.
     """
@@ -112,7 +111,7 @@ def show_item_stats(item: classes.Item):
     print_panel(full_text, title=item.name, color="blue")
 
 
-def show_inventory(hero: classes.Hero):
+def show_inventory(hero):
     """
     Displays the hero's gold and a list of "treasure" items in their satchel.
     It ignores weapons, armor, and accessories.
